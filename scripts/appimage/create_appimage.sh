@@ -66,6 +66,7 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     libdrm2 \
     libgbm1 \
+    binutils \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
