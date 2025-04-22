@@ -42,20 +42,27 @@ const VoidIcon = () => {
 	const divRef = useRef<HTMLDivElement | null>(null)
 
 	useEffect(() => {
-		// void icon style
 		const updateTheme = () => {
 			const theme = themeService.getColorTheme().type
 			const isDark = theme === ColorScheme.DARK || theme === ColorScheme.HIGH_CONTRAST_DARK
 			if (divRef.current) {
-				divRef.current.style.maxWidth = '220px'
-				divRef.current.style.opacity = '50%'
-				divRef.current.style.filter = isDark ? '' : 'invert(1)' //brightness(.5)
+				const prev = divRef.current.style.filter
+				const newFilter = isDark ? '' : 'invert(1)'
+				if (prev !== newFilter) {
+					divRef.current.style.filter = newFilter
+				}
 			}
 		}
+
+		const disposable = themeService.onDidColorThemeChange(() => {
+			requestAnimationFrame(updateTheme)
+		})
+
 		updateTheme()
-		const d = themeService.onDidColorThemeChange(updateTheme)
-		return () => d.dispose()
+
+		return () => disposable.dispose()
 	}, [])
+
 
 	return <div ref={divRef} className='@@void-void-icon' />
 }
